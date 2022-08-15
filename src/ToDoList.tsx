@@ -23,28 +23,58 @@ import { useForm } from "react-hook-form";
 //     </div>
 //   );
 // }
-
+interface IForm {
+  email: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+  password1: string;
+}
 function ToDoList() {
-  const { register, handleSubmit, formState } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IForm>({
+    defaultValues: {
+      email: "@naver.com",
+    },
+  });
   const onValid = (data: any) => {
     console.log(data);
   };
-  console.log(formState.errors);
   return (
     <div>
       <form
         onSubmit={handleSubmit(onValid)}
         style={{ display: "flex", flexDirection: "column" }}
       >
-        <input {...register("Email", { required: true })} placeholder="Email" />
         <input
-          {...register("firstName", { required: true, minLength: 10 })}
+          {...register("email", {
+            required: "Write Required",
+            pattern: {
+              value: /^[A-Za-z0-9._%+-]+@naver.com$/,
+              message: "only naver.com eamils allowed",
+            },
+          })}
+          placeholder="Email"
+        />
+        <span>{errors?.email?.message}</span>
+        <input
+          {...register("firstName", {
+            required: "Write Required",
+            minLength: 10,
+          })}
           placeholder="first Name"
         />
+        <span>{errors?.firstName?.message}</span>
+
         <input
-          {...register("lastName", { required: true })}
+          {...register("lastName", { required: "Write Required" })}
           placeholder="last Name"
         />
+        <span>{errors?.lastName?.message}</span>
+
         <input
           {...register("password", {
             required: "Password is required.",
@@ -55,10 +85,14 @@ function ToDoList() {
           })}
           placeholder="password"
         />
+        <span>{errors?.password?.message}</span>
+
         <input
-          {...register("password1", { required: true })}
+          {...register("password1", { required: "Write Required" })}
           placeholder="password1"
         />
+        <span>{errors?.password1?.message}</span>
+
         <button>submit</button>
       </form>
     </div>
