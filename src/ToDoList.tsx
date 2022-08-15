@@ -29,20 +29,30 @@ interface IForm {
   lastName: string;
   password: string;
   password1: string;
+  extraError?: string;
 }
 function ToDoList() {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm<IForm>({
     defaultValues: {
       email: "@naver.com",
     },
   });
-  const onValid = (data: any) => {
-    console.log(data);
+  const onValid = (data: IForm) => {
+    if (data.password !== data.password1) {
+      setError(
+        "password1",
+        { message: "Password are not the same" },
+        { shouldFocus: true }
+      );
+    }
+    setError("extraError", { message: "Server Offline" });
   };
+  console.log(errors);
   return (
     <div>
       <form
@@ -64,6 +74,12 @@ function ToDoList() {
           {...register("firstName", {
             required: "Write Required",
             minLength: 10,
+            validate: {
+              noNicko: (value) =>
+                value.includes("nico") ? "No nico allowed" : true,
+              noNick: (value) =>
+                value.includes("nick") ? "No nick allowed" : true,
+            },
           })}
           placeholder="first Name"
         />
